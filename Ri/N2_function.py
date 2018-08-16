@@ -6,20 +6,20 @@ import scipy.signal as sp
 import datetime as dt
 from beam2ENU import beam2ENU
 
-directory = '../../Data/deployment_raw/';
-outdir = '../../plots/Ri/S2/';
-deployment_name = 'deploy1_';
-measurement_type = 'ctd_';
-file_type = 'raw_'
-pd.set_option('display.max_colwidth', -1)
-filt_val=10
 
-for i in range(0,58,2):
-	c_file = 'C'+("%07d" % (i,))
-	a_file = 'A'+("%07d" % (i,))
+def N2_function(profile):
+
+	directory = '../../Data/deployment_raw/';
+	deployment_name = 'deploy1_';
+	measurement_type = 'ctd_';
+	file_type = 'raw_'
+
+	filt_val = 20;
+
+	c_file = 'C'+("%07d" % (profile,))
+	a_file = 'A'+("%07d" % (profile,))
 	c_data = pd.read_pickle(directory+deployment_name+file_type+c_file)
 	a_data = pd.read_pickle(directory+deployment_name+file_type+a_file)
-
 
 	#Create time for CTD data
 	start_time = a_data["a_time"].values[1][:-10]
@@ -46,9 +46,10 @@ for i in range(0,58,2):
 
 	data_start = data.index[data["c_pres"]>10][0]
 	data_end = data.index[data["c_pres"]>100][0]
+
 	data = data[data_start:data_end]
-	#a_data = a_data.iloc[data_start:data_end].reset_index()
-	#print(a_data)
+	#Create my panda dataframe
+	#Ri_calcs = pd.DataFrame({'time':c_time})
 
 	#Generate the bouyancy frequency plot
 	CT = gsw.CT_from_t(data['c_sal'],data['c_temp'],data['c_pres'])
@@ -56,9 +57,14 @@ for i in range(0,58,2):
 	[N2,p_mid,dp] = gsw.Nsquared(SA,CT,data['c_pres'])
 	Ri_calcs = pd.DataFrame({'pres':p_mid})
 	Ri_calcs['dp'] = pd.Series(dp, index=Ri_calcs.index)
+	#Ri_calcs['pres'] = pd.Series()
 	Ri_calcs['N2'] = pd.Series(N2, index=Ri_calcs.index)
 	Ri_calcs['N2'] = Ri_calcs['N2'].mask(((Ri_calcs['N2']-Ri_calcs['N2'].mean()).abs() > 2*Ri_calcs['N2'].std()))
 	Ri_calcs['N2'] = Ri_calcs['N2'].interpolate()
+
+
+
+
 
 	#Generate the east, north and up
 	[east,north,up] = beam2ENU([a_data["a_beam1"][0],a_data["a_beam2"][0],a_data["a_beam3"][0],a_data["a_beam4"][0]],a_data['a_heading'].values,a_data['a_pitch'].values,a_data['a_roll'].values,a_data['a_vel1'].values,a_data['a_vel2'].values,a_data['a_vel3'].values)	
@@ -77,7 +83,7 @@ for i in range(0,58,2):
 
 	#get rid of any outliers (dp,N2,bin_east,bin_north)
 	Ri_calcs['N2'] = Ri_calcs['N2'].mask(((Ri_calcs['N2']-Ri_calcs['N2'].mean()).abs() > 3*Ri_calcs['N2'].std()))
-	Ri_calcs['N2'] = Ri_calcs['N2'].interpolate().rolling(filt_val).mean()
+	Ri_calcs['N2'] = Ri_calcs['N2'].interpolate().rolling(filt_val).mean().abs()
 	#N2 = N2.sort_values()
 
 	#Shear magnitude values
@@ -111,8 +117,8 @@ for i in range(0,58,2):
 	#Ri_calcs['S2'] = Ri_calcs['S2'].mask(Ri_calcs['S2']> 100)	
 	Ri_calcs['S2'] = Ri_calcs['S2'].mask(((Ri_calcs['S2']-Ri_calcs['S2'].mean()).abs() > Ri_calcs['S2'].std()))
 	#Ri_calcs['S2'] = Ri_calcs['S2'].interpolate().rolling(filt_val).mean()
-	Ri_calcs['S2'] = Ri_calcs['S2'].interpolate()
-	
+	Ri_calcs['S2'] = Ri_calcs['S2'].interpolate().abs()
+
 	Ri_calcs['Ri'] = Ri_calcs['N2']/Ri_calcs['S2']
 	Ri_calcs['Ri'] = Ri_calcs['Ri'].mask(((Ri_calcs['Ri']-Ri_calcs['Ri'].mean()).abs() > 3*Ri_calcs['Ri'].std()))
 	Ri_calcs['Ri'] = Ri_calcs['Ri'].interpolate()	
@@ -121,7 +127,4 @@ for i in range(0,58,2):
 	binned = Ri_calcs.groupby(Ri_calcs['pres_round']).mean()
 	binned = binned.rolling(10).mean()
 
-	plt.plot(binned['Ri'],binned['pres_round']*-1)
-	plt.savefig(outdir+measurement_type+deployment_name+'profile'+str(i)+".png")
-	plt.clf()
-	#plt.show()
+	return binned
