@@ -10,6 +10,7 @@ from beam2ENU import beam2ENU
 def N2_function(profile):
 
 	directory = '../../Data/deployment_raw/';
+	outdir = '../../plots/Ri/N2/';
 	deployment_name = 'deploy1_';
 	measurement_type = 'ctd_';
 	file_type = 'raw_'
@@ -96,8 +97,11 @@ def N2_function(profile):
 	# Ri_calcs['dp'] = pd.Series(dp, index=Ri_calcs.index)
 	#Ri_calcs['dp'] = Ri_calcs['dp'].mask(Ri_calcs['dp'] == 0)
 	#dp = [dp[x] if dp[x]!=0 else (dp[x+1]+dp[x-1])/2 for x in range(len(dp))]	
+
 	Ri_calcs['dp'] = Ri_calcs['dp'].mask(((Ri_calcs['dp']-Ri_calcs['dp'].mean()).abs() > 3*Ri_calcs['dp'].std()))
 	Ri_calcs['dp'] = Ri_calcs['dp'].interpolate().rolling(filt_val).mean()	
+	
+
 
 	bin_east = bin_east[data_start:data_end]
 	bin_north = bin_north[data_start:data_end]
@@ -105,7 +109,7 @@ def N2_function(profile):
 	Ri_calcs['dV'] = pd.Series(dV, index=Ri_calcs.index)
 	Ri_calcs['dV'] = Ri_calcs['dV'].mask(((Ri_calcs['dV']-Ri_calcs['dV'].mean()).abs() > 3*Ri_calcs['dV'].std()))
 	Ri_calcs['dV'] = Ri_calcs['dV'].interpolate().rolling(filt_val).mean()
-	
+
 	dU = bin_north[deep]-bin_north[shallow]
 	Ri_calcs['dU'] = pd.Series(dU, index=Ri_calcs.index)
 	Ri_calcs['dU'] = Ri_calcs['dU'].mask(((Ri_calcs['dU']-Ri_calcs['dU'].mean()).abs() > 3*Ri_calcs['dU'].std()))
@@ -119,6 +123,9 @@ def N2_function(profile):
 	#Ri_calcs['S2'] = Ri_calcs['S2'].interpolate().rolling(filt_val).mean()
 	Ri_calcs['S2'] = Ri_calcs['S2'].interpolate().abs()
 
+	plt.plot(Ri_calcs['S2'])
+	plt.savefig(outdir+'S2_'+str(profile)+".png")
+	plt.clf()
 	Ri_calcs['Ri'] = Ri_calcs['N2']/Ri_calcs['S2']
 	Ri_calcs['Ri'] = Ri_calcs['Ri'].mask(((Ri_calcs['Ri']-Ri_calcs['Ri'].mean()).abs() > 3*Ri_calcs['Ri'].std()))
 	Ri_calcs['Ri'] = Ri_calcs['Ri'].interpolate()	
