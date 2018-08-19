@@ -19,6 +19,7 @@ for i in range(0,58,2):
 		pass#do nothing
 	else:
 		binned = N2_function(i)
+
 		pressure_array.extend(binned.index.tolist())
 		profile_array.extend([i]*len(binned.index))
 		N2_array.extend(binned['N2'].tolist())

@@ -123,9 +123,7 @@ def N2_function(profile):
 	#Ri_calcs['S2'] = Ri_calcs['S2'].interpolate().rolling(filt_val).mean()
 	Ri_calcs['S2'] = Ri_calcs['S2'].interpolate().abs()
 
-	plt.plot(Ri_calcs['S2'])
-	plt.savefig(outdir+'S2_'+str(profile)+".png")
-	plt.clf()
+
 	Ri_calcs['Ri'] = Ri_calcs['N2']/Ri_calcs['S2']
 	Ri_calcs['Ri'] = Ri_calcs['Ri'].mask(((Ri_calcs['Ri']-Ri_calcs['Ri'].mean()).abs() > 3*Ri_calcs['Ri'].std()))
 	Ri_calcs['Ri'] = Ri_calcs['Ri'].interpolate()	
@@ -133,5 +131,8 @@ def N2_function(profile):
 	Ri_calcs['pres_round'] = Ri_calcs['pres'].round(0)
 	binned = Ri_calcs.groupby(Ri_calcs['pres_round']).mean()
 	binned = binned.rolling(10).mean()
-
+	#plt.plot(binned['S2'])
+	plt.plot(Ri_calcs['N2'])
+	plt.savefig(outdir+'N2_'+str(profile)+".png")
+	plt.clf()
 	return binned
