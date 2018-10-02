@@ -5,7 +5,7 @@ import datetime as dt
 
 directory = '../../Data/deployment_raw/';
 out_directory = '../../plots/adcp_aqua/euler_bins/';
-deployment_name = 'deploy2_';
+deployment_name = 'deploy1_';
 measurement_type = 'euler_';
 file_type = 'raw_'
 bin_number = 100
@@ -16,7 +16,7 @@ roll_array = [];
 pitch_array = [];
 time_array = []
 
-for i in range(0,10,2):
+for i in range(0,58,2):
 	a_file = 'A'+("%07d" % (i,))
 	a_data = pd.read_pickle(directory+deployment_name+file_type+a_file)
 	
@@ -37,14 +37,14 @@ for i in range(0,10,2):
 	time_array.extend(range(len(time)))
 
 plt.subplot(131)
-plt.scatter(profile_array,time_array,s=9,c=heading_array)
+plt.scatter(profile_array,time_array,s=11,c=heading_array)
 plt.title('heading (degrees)')
 plt.xlabel('Profile')
 plt.ylabel('time')
 plt.colorbar()
 
 plt.subplot(132)
-plt.scatter(profile_array,time_array,s=9,c=pitch_array)
+plt.scatter(profile_array,time_array,s=11,c=pitch_array)
 plt.title('pitch (degrees)')
 plt.xlabel('Profile')
 plt.tick_params(
@@ -56,7 +56,7 @@ plt.tick_params(
 plt.colorbar()
 
 plt.subplot(133)
-plt.scatter(profile_array,time_array,s=7,c=roll_array)
+plt.scatter(profile_array,time_array,s=11,c=roll_array)
 plt.title('roll (degrees)')
 plt.xlabel('Profile')
 plt.tick_params(

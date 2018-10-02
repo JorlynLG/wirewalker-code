@@ -24,14 +24,9 @@ for i in range(0,58,2):
 
 neg_pressure_array = [-x for x in pressure_array]
 
-#Creating a grid
-xi,yi = np.meshgrid(np.arange(0,58,0.5),np.arange(-120,0,1))
-grid_salinity = griddata((profile_array,neg_pressure_array),salinity_array,(xi,yi),method='linear')
-grid_temperature = griddata((profile_array,neg_pressure_array),temperature_array,(xi,yi),method='linear')
-
 #Salinity plot
 ax1 = plt.subplot(212)
-fig1 = ax1.scatter(xi,yi,s=4,c=grid_salinity)
+fig1 = ax1.scatter(profile_array,neg_pressure_array,s=10,c=salinity_array,marker='_')
 ax1.set_title('Salinity (pss)')
 ax1.set_xlabel('Profile')
 ax1.set_ylabel('Pressure (dbar)')	
@@ -42,11 +37,13 @@ plt.colorbar(fig1,ax=ax1)
 
 #Temperature plot
 ax2 = plt.subplot(211)
-fig2 = ax2.scatter(xi,yi,s=4,c=grid_temperature)
+fig2 = ax2.scatter(profile_array,neg_pressure_array,s=4,c=temperature_array)
 ax2.set_title('Temperature (C)')
 ax2.set_xlabel('Profile')
 ax2.xaxis.set_label_position('bottom') # this moves the label to the top
 ax2.xaxis.set_ticks_position('bottom') # this moves the ticks to the top
 plt.colorbar(fig2,ax=ax2)
-#plt.savefig(outdir+measurement_type+deployment_name+'profile'+str(i)+".png")
+
 plt.show()
+#plt.savefig(outdir+measurement_type+deployment_name+'profile'+str(i)+".png")
+#plt.show()

@@ -3,36 +3,38 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 directory = '../../Data/deployment_raw/';
-outdir = '../../plots/ctd/basic/';
+outdir = '../../plots/ctd/pressure/';
 deployment_name = 'deploy1_';
 measurement_type = 'ctd_';
 file_type = 'raw_'
 
-for i in range(58):
+for i in range(40,41):
 	c_file = 'C'+("%07d" % (i,))
 	c_data = pd.read_pickle(directory+deployment_name+file_type+c_file)
 
 	# Three-panel plot
-	fig2, (ax2, ax3, ax4) = plt.subplots(1,3,sharey=True)
+	fig2, (ax2, ax3, ax4) = plt.subplots(1,3)
 	# Temperature
-	ax2.plot(c_data['c_temp'].values,c_data['c_depth'].values,'-')
-	ax2.set_ylabel('Depth (m)')
+	ax2.plot(-c_data['c_pres'].values[150:750])
+	ax2.set_ylabel('Pressure (dbar)')
+	ax2.set_title('Pressure (dbar)')
 	#ax2.set_ylim(ax2.get_ylim()[::-1]) #this reverses the yaxis (i.e. deep at the bottom)
-	ax2.set_xlabel('Temperature (C)')
 	ax2.xaxis.set_label_position('top') # this moves the label to the top
 	ax2.xaxis.set_ticks_position('top') # this moves the ticks to the top
+	ax2.xaxis.set_visible(False) # This erases the y ticks
 	# Salinity
-	ax3.plot(c_data['c_sal'].values,c_data['c_depth'].values,'-r')
-	ax3.set_xlabel('Salinity (pss)')
+	ax3.plot(np.sort(-c_data['c_pres'].values[150:750])[::-1])
+	ax3.set_title('Pressure Sorted (dbar)')
 	ax3.xaxis.set_label_position('top') # this moves the label to the top
 	ax3.xaxis.set_ticks_position('top') # this moves the ticks to the top
-	ax3.yaxis.set_visible(False) # This erases the y ticks
+	ax3.xaxis.set_visible(False) # This erases the y ticks
 	# Fluorescence
-	ax4.plot(c_data['c_dens'].values,c_data['c_depth'].values,'-g')
-	ax4.set_xlabel('Density (kg/m3)')
+	ax4.plot(np.argsort(-c_data['c_dens'].values[150:750]))
+	ax4.set_title('Pressure Sorted Index')
 	ax4.xaxis.set_label_position('top') # this moves the label to the top
 	ax4.xaxis.set_ticks_position('top') # this moves the ticks to the top
-	ax4.yaxis.set_visible(False) # This erases the y ticks
+	ax4.xaxis.set_visible(False) # This erases the y ticks
+	ax4.set_ylabel('Index')
 
 	# plt.subplot(131);
 	# #c_data.plot.scatter('c_sal','c_pres','filled');
@@ -52,6 +54,6 @@ for i in range(58):
 	# plt.xlabel('Density (kg/m3)');
 
 	#plt.suptitle("Profile "+ str(i))
-	plt.savefig(outdir+measurement_type+deployment_name+'profile'+str(i)+".png")
-	plt.clf()
-#savefig(gcf,[outdir,'/',measurement_type, deployment_name,'profile',num2str(stas(mm))])
+	plt.show()
+
+	#savefig(gcf,[outdir,'/',measurement_type, deployment_name,'profile',num2str(stas(mm))])
