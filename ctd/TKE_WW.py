@@ -22,9 +22,9 @@ for i in range(10):
 
 
 	#plt.show()
-	# Temperature
 	fig2, (ax2, ax3, ax4) = plt.subplots(1,3,sharey=True)
-	plt.plot(c_data['pdens'],c_data["c_depth"].values,c='k')
+	# Temperature
+	ax2.plot(c_data['pdens'],c_data["c_depth"].values,c='k')
 	ax2.set_ylabel('Depth (m)')
 	#ax2.set_ylim(ax2.get_ylim()[::-1]) #this reverses the yaxis (i.e. deep at the bottom)
 	ax2.set_xlabel('Density (kg/m3)')

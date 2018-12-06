@@ -5,8 +5,8 @@ from ocean_tools import TKED
 import gsw
 
 directory = '../../Data/deployment_raw/';
-outdir = '../../plots/ctd/density/';
-deployment_name = 'deploy1_';
+outdir = '../../plots/ctd/LT_D_R/';
+deployment_name = 'deploy2_';
 measurement_type = 'ctd_';
 file_type = 'raw_'
 
@@ -18,13 +18,16 @@ for i in range(1):
 	SA = gsw.SA_from_SP(c_data['c_sal'],c_data['c_pres'],174,-43)
 	pdens = gsw.sigma0(SA, CT)
 	c_data["pdens"] = pdens
-	[LT,Td,Nsqu,Lo,R,x_sorted,idxs] = TKED.thorpe_scales(c_data["c_depth"].values*-1 ,c_data['pdens'].values,full_output=True)
-	
-	print(LT)
-#	plt.plot(LT,c_data["c_pres"].values*-1,c='k')
-	plt.plot(c_data['pdens'],c_data["c_depth"].values,c='k')
-	plt.xlabel("Density (kg/m3)")
-	plt.ylabel('Depth (m)')
-	plt.savefig(outdir+measurement_type+deployment_name+'profile'+str(i)+".png")
-	plt.clf()
+	[LT,Td,Nsqu,Lo,R,x_sorted,idxs] = TKED.thorpe_scales(c_data["c_depth"].values*-1,c_data['pdens'].values,full_output=True)
+
+	c_data["Td"] = Td
+	c_data["Td"] = c_data["Td"].rolling(10).mean()
+	c_data["Td"] = c_data["Td"]**2
+	c_data["Td"] = c_data["Td"].rolling(10).mean()
+	c_data["LT"] = np.sqrt(c_data["Td"])
+
+	#plt.show()
+	# Temperature
+	plt.plot(c_data["LT"],c='k')
+	plt.plot(LT,c='k')
 	plt.show()
