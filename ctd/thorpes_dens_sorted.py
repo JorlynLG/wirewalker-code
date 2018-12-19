@@ -18,7 +18,7 @@ for i in range(10):
 	SA = gsw.SA_from_SP(c_data['c_sal'],c_data['c_pres'],174,-43)
 	pdens = gsw.sigma0(SA, CT)
 	c_data["pdens"] = pdens
-	[LT,Td,Nsqu,Lo,R,x_sorted,idxs] = TKED.thorpe_scales1(c_data["c_depth"].values*-1,c_data['pdens'].values,full_output=True)
+	[LT,Td,Nsqu,Lo,R,x_sorted,idxs] = TKED.thorpe_scales(c_data["c_depth"].values*-1,c_data['pdens'].values,full_output=True)
 
 
 	#plt.show()

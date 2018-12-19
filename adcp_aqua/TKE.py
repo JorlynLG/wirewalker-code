@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from beam2ENU import beam2ENU
 import time
-from math import sqrtt
+from math import sqrt
 
 directory = '../../Data/deployment_raw/';
 out_directory = '../../plots/adcp_aqua/euler_plots/';

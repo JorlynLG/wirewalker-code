@@ -28,6 +28,7 @@ for i in range(1):
 
 	#plt.show()
 	# Temperature
-	plt.plot(c_data["LT"],c='k')
-	plt.plot(LT,c='k')
+	#plt.plot(c_data["LT"],c='k')
+	#plt.plot(LT,c='k')
+	plt.plot(c_data["c_sal"],c='k')
 	plt.show()

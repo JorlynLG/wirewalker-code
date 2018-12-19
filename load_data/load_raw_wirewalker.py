@@ -10,7 +10,7 @@ deployment = 'deploy2_'
 file_type = 'raw_'
 
 
-for i in range(10):
+for i in range(1):
 	#Files that we want to open and save from
 	e_file = 'E'+("%07d" % (i,))
 	a_file = 'A'+("%07d" % (i,))
@@ -69,7 +69,15 @@ for i in range(10):
 	
 	c_headers = ["c_cond","c_temp","c_pres","c_hz"]	
 	c_data = pd.read_csv(directory+c_file+'.txt', sep=",",header = 1,skipfooter=4, names=c_headers)
+	plt.plot(c_data['c_cond'])
+	plt.show()
+	plt.plot(c_data['c_temp'])
+	plt.show()
+	plt.plot(c_data['c_pres'])
+	plt.show()	
 	c_data['c_sal'] = pd.Series(gsw.SP_from_C(c_data["c_cond"].tolist(),c_data["c_temp"].tolist(),c_data["c_pres"].tolist()), index=c_data.index)
+	plt.plot(c_data['c_sal'])
+	plt.show()
 	c_data['c_depth'] = pd.Series(gsw.z_from_p(c_data["c_pres"].values,-43), index=c_data.index)
 	c_data['c_dens'] = pd.Series(gsw.rho(c_data["c_sal"].values,c_data["c_temp"].values,np.zeros(len(c_data["c_pres"].values))), index=c_data.index)
 	c_data.to_pickle(out_directory+deployment+file_type+c_file)
